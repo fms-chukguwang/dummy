@@ -1,73 +1,40 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# 프로젝트명 💻
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+인덱싱을 사용하여 특정 팀의 멤버를 찾는 엔드포인트에 대한 성능 테스트를 수행
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## 성능 테스트 설명 🚀
 
-## Description
+특정 팀 ID를 사용하여 1000번의 요청을 보내고, 각 요청에 대한 응답 시간을 기록하여 평균값 계산 및 성능 평가
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## 테스트 환경 🛠️
 
-## Installation
+- NestJS 프레임워크
+- Supertest 라이브러리
 
-```bash
-$ npm install
-```
+## 주의 사항 ⚠️
 
-## Running the app
+- 테스트 타임아웃은 10분으로 설정됨
 
-```bash
-# development
-$ npm run start
+## 사용법 📋
 
-# watch mode
-$ npm run start:dev
+1. npm install
+2. `test:seedJo3` 
 
-# production mode
-$ npm run start:prod
-```
+## 성능 테스트 결과 📊
 
-## Test
+EXPLAIN + 팀 아이디 중복 최대한 적게만들어서 시간값 계산
+인덱싱을 사용안했을때:
+<img width="1000" alt="Screenshot_2024-02-08_at_1 09 36_PM" src="https://github.com/fms-chukguwang/dummy/assets/39757235/811cb12b-96e0-4aae-933b-214f4c90814e">
 
-```bash
-# unit tests
-$ npm run test
+인덱싱을 사용했을때:<img width="1000" alt="Screenshot_2024-02-08_at_1 10 14_PM" src="https://github.com/fms-chukguwang/dummy/assets/39757235/20d29437-2bda-4cc4-b023-0523914ba855">
 
-# e2e tests
-$ npm run test:e2e
+결과값 JSON은 MySQL의 쿼리 실행 계획을 나타냄. 쿼리는 "members" 테이블에 접근하고 있으며 "team_id"를 키로 사용하여 조회하고 있음. 키는 "idx_team_id"에 정의되어 있고, 쿼리 실행에 필요한 비용은 1.05와 9109.05로 나옴. 
 
-# test coverage
-$ npm run test:cov
-```
+1. "rows_examined_per_scan": 3 - 스캔당 조사된 행 수. 즉, 해당 쿼리에 대해 각 스캔에서 3개의 행이 조사됨
+2. "rows_produced_per_join": 3 - 조인 당 생성된 행 수. 즉, 조인 작업에서 각 조인에서 3개의 행이 생성됨.
+3. "filtered": "100.00" - 필터링된 행의 비율. 100%이므로 모든 행이 필터링됨.
+4. "read_cost": "0.75" - 읽기 비용. 즉, 쿼리 실행 중 데이터를 읽는 데 소요된 비용.
+5. "eval_cost": "0.30" - 평가 비용. 즉, 필터 조건 등을 평가하는 데 소요된 비용.
 
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
+쿼리 실행 계획에서 비용이 낮을수록 좋고 성능 최적화를 위해서는 비용을 최소화해야함.
+결론: 인덱싱을 써서 데이터 조회시 안쓸때보다 훨씬 빠름
